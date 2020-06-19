@@ -18,7 +18,7 @@ client.headers("User-Agent" => "API Client").timeout(read: 5, write: 5).get("/or
 
 Oauth2ApiClient is capable of generating oauth2 tokens, when a client id,
 client secret and oauth token url is given with automatic token caching and
-renewal on expiry.
+renewal on expiry, including retry of the current request.
 
 ```ruby
 client = Oauth2ApiClient.new(
