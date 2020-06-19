@@ -16,16 +16,10 @@ class Oauth2ApiClient
   # Creates a new Oauth2ApiClient
   #
   # @param base_url [String] The base url of the API to interact with
-  # @param token Allows to pass an existing token received via external sources
-  ## @param client_id [String] The client id to use for oauth2 authentication
-  ## @param client_secret [String] The client secret to use for oauth2 authentication
-  ## @param oauth_token_url [String] The url to obtain tokens from
-  ## @param cache The cache instance to cache the tokens, e.g. `Rails.cache`.
-  ##   Defaults to `ActiveSupport::Cache::MemoryStore.new`
-  ## @param max_token_ttl [#to_i] The max lifetime of the token in the cache
-  ## @param base_request You can pass some http-rb rqeuest as the base. Useful,
-  ##   if some information needs to be passed with every request. Defaults to
-  ##   `HTTP`
+  # @param token [String, Oauth2ApiClient::TokenProvider] Allows to pass an
+  #   existing token received via external sources or an instance of
+  #   `Oauth2ApiClient::TokenProvider` which is capable of generating
+  #   tokens when client id, client secret, etc. is given
   #
   # @example
   #   client = Oauth2ApiClient.new(
