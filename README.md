@@ -43,6 +43,11 @@ or install it via
 $ gem install oauth2_api_client
 ```
 
+## Reference Docs
+
+The reference docs can be found at
+[http://www.rubydoc.info/github/mrkamel/oauth2_api_client](http://www.rubydoc.info/github/mrkamel/oauth2_api_client)
+
 ## Semantic Versioning
 
 Oauth2ApiClient is using Semantic Versioning: [SemVer](http://semver.org/)

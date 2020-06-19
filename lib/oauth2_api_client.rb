@@ -26,7 +26,7 @@ class Oauth2ApiClient
   #   `HTTP`
   #
   # @example
-  #   Oauth2ApiClient.new(
+  #   client = Oauth2ApiClient.new(
   #     base_url: "https://api.example.com/",
   #     client_id: "the client id",
   #     client_secret: "the client secret",
@@ -34,6 +34,9 @@ class Oauth2ApiClient
   #     cache: Rails.cache,
   #     base_request: HTTP.headers("User-Agent" => "API client")
   #   )
+  #
+  #   client.post("/orders", json: { address: "..." }).status.success?
+  #   client.headers("User-Agent" => "API Client").timeout(read: 5, write: 5).get("/orders").parse
 
   def initialize(base_url:, client_id:, client_secret:, oauth_token_url:, cache: ActiveSupport::Cache::MemoryStore.new, max_token_ttl: 3600, base_request: HTTP)
     @base_url = base_url
@@ -55,6 +58,8 @@ class Oauth2ApiClient
   end
 
   # Returns a oauth2 token to use for authentication
+  #
+  # @return [String] The token
 
   def token
     @cache.fetch(cache_key, expires_in: @max_token_ttl.to_i) do
