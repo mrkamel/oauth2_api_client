@@ -6,6 +6,7 @@ require "active_support"
 
 require "oauth2_api_client/version"
 require "oauth2_api_client/http_error"
+require "oauth2_api_client/token_provider"
 
 # The Oauth2ApiClient class is a client wrapped around the oauth2 and http-rb
 # gem to interact with APIs using oauth2 for authentication with automatic
@@ -15,46 +16,41 @@ class Oauth2ApiClient
   # Creates a new Oauth2ApiClient
   #
   # @param base_url [String] The base url of the API to interact with
-  # @param client_id [String] The client id to use for oauth2 authentication
-  # @param client_secret [String] The client secret to use for oauth2 authentication
-  # @param oauth_token_url [String] The url to obtain tokens from
-  # @param cache The cache instance to cache the tokens, e.g. `Rails.cache`.
-  #   Defaults to `ActiveSupport::Cache::MemoryStore.new`
-  # @param max_token_ttl [#to_i] The max lifetime of the token in the cache
-  # @param base_request You can pass some http-rb rqeuest as the base. Useful,
-  #   if some information needs to be passed with every request. Defaults to
-  #   `HTTP`
+  # @param token Allows to pass an existing token received via external sources
+  ## @param client_id [String] The client id to use for oauth2 authentication
+  ## @param client_secret [String] The client secret to use for oauth2 authentication
+  ## @param oauth_token_url [String] The url to obtain tokens from
+  ## @param cache The cache instance to cache the tokens, e.g. `Rails.cache`.
+  ##   Defaults to `ActiveSupport::Cache::MemoryStore.new`
+  ## @param max_token_ttl [#to_i] The max lifetime of the token in the cache
+  ## @param base_request You can pass some http-rb rqeuest as the base. Useful,
+  ##   if some information needs to be passed with every request. Defaults to
+  ##   `HTTP`
   #
   # @example
   #   client = Oauth2ApiClient.new(
   #     base_url: "https://api.example.com/",
-  #     client_id: "the client id",
-  #     client_secret: "the client secret",
-  #     oauth_token_url: "https://auth.example.com/oauth2/token",
-  #     cache: Rails.cache,
-  #     base_request: HTTP.headers("User-Agent" => "API client")
+  #     token: "the api token"
   #   )
   #
   #   client.post("/orders", json: { address: "..." }).status.success?
   #   client.headers("User-Agent" => "API Client").timeout(read: 5, write: 5).get("/orders").parse
+  #
+  # @example
+  #   client = Oauth2ApiClient.new(
+  #     base_url: "https://api.example.com/",
+  #     token: Oauth2ApiClient::TokenProvider.new(
+  #       client_id: "the client id",
+  #       client_secret: "the client secret",
+  #       oauth_token_url: "https://auth.example.com/oauth2/token",
+  #       cache: Rails.cache
+  #     )
+  #   )
 
-  def initialize(base_url:, client_id:, client_secret:, oauth_token_url:, cache: ActiveSupport::Cache::MemoryStore.new, max_token_ttl: 3600, base_request: HTTP)
+  def initialize(base_url:, base_request: HTTP, token:)
     @base_url = base_url
-    @client_id = client_id
-    @client_secret = client_secret
-    @oauth_token_url = oauth_token_url
-    @max_token_ttl = max_token_ttl
-    @cache = cache
+    @token = token
     @request = base_request
-
-    oauth_uri = URI.parse(oauth_token_url)
-
-    @oauth_client = OAuth2::Client.new(
-      @client_id,
-      @client_secret,
-      site: URI.parse("#{oauth_uri.scheme}://#{oauth_uri.host}:#{oauth_uri.port}/").to_s,
-      token_url: oauth_uri.path
-    )
   end
 
   # Returns a oauth2 token to use for authentication
@@ -62,9 +58,7 @@ class Oauth2ApiClient
   # @return [String] The token
 
   def token
-    @cache.fetch(cache_key, expires_in: @max_token_ttl.to_i) do
-      @oauth_client.client_credentials.get_token.token
-    end
+    @token.respond_to?(:to_str) ? @token.to_str : @token.token
   end
 
   [:timeout, :headers, :cookies, :via, :encoding, :accept, :auth, :basic_auth].each do |method|
@@ -85,10 +79,6 @@ class Oauth2ApiClient
 
   private
 
-  def cache_key
-    @cache_key ||= ["oauth_api_client", @base_url, @oauth_token_url, @client_id].join("|")
-  end
-
   def execute(verb, path, options = {})
     with_retry do
       response = @request.auth("Bearer #{token}").send(verb, URI.join(@base_url, path), options)
@@ -105,13 +95,15 @@ class Oauth2ApiClient
     begin
       yield
     rescue HttpError => e
-      @cache.delete(cache_key) if e.response.status.unauthorized?
+      if !retried && e.response.status.unauthorized? && @token.respond_to?(:invalidate_token)
+        @token.invalidate_token
 
-      raise(e) if retried || !e.response.status.unauthorized?
+        retried = true
 
-      retried = true
+        retry
+      end
 
-      retry
+      raise
     end
   end
 end

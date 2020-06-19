@@ -6,21 +6,31 @@
 Oauth2ApiClient is small, but powerful client around
 [oauth2](https://github.com/oauth-xx/oauth2) and
 [http-rb](https://github.com/httprb/http) to interact with APIs which use
-oauth2 for authentication with automatic token caching and renewal.
+oauth2 for authentication.
 
 ```ruby
-client = Oauth2ApiClient.new(
-  base_url: "https://api.example.com/",
-  client_id: "the client id",
-  client_secret: "the client secret",
-  oauth_token_url: "https://auth.example.com/oauth2/token",
-  max_token_ttl: 3600, # optional
-  cache: Rails.cache # optional
-)
+client = Oauth2ApiClient.new(base_url: "https://api.example.com/", token "oauth2 token")
 
 client.post("/orders", json: { address: "..." }).status.success?
 client.headers("User-Agent" => "API Client").timeout(read: 5, write: 5).get("/orders").parse
 # ...
+```
+
+Oauth2ApiClient is capable of generating oauth2 tokens, when a client id,
+client secret and oauth token url is given with automatic token caching and
+renewal on expiry.
+
+```ruby
+client = Oauth2ApiClient.new(
+  base_url: "https://api.example.com/",
+  token: Oauth2ApiClient::TokenProvider.new(
+    client_id: "client id",
+    client_secret: "client secret",
+    token_url: "https.//auth.example.com/oauth2/token",
+    cache: Rails.cache, # optional,
+    max_token_ttl: 1800 # optional
+  )
+)
 ```
 
 ## Install

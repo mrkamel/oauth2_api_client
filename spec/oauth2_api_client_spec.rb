@@ -31,63 +31,30 @@ RSpec.describe Oauth2ApiClient do
   end
 
   describe "#token" do
-    it "returns a oauth2 token" do
-      client = described_class.new(
-        base_url: "http://localhost/",
-        client_id: "client_id",
-        client_secret: "client_secret",
-        oauth_token_url: "http://localhost/oauth2/token"
-      )
+    it "returns the supplier token" do
+      client = described_class.new(base_url: "http://localhost/", token: "access_token")
 
       expect(client.token).to eq("access_token")
     end
 
-    it "returns the cached token if existing" do
-      cache = ActiveSupport::Cache::MemoryStore.new
-
-      allow(cache).to receive(:fetch).and_return("cached_token")
-
+    it "returns a oauth2 token" do
       client = described_class.new(
         base_url: "http://localhost/",
-        client_id: "client_id",
-        client_secret: "client_secret",
-        oauth_token_url: "http://localhost/oauth2/token",
-        cache: cache
+        token: described_class::TokenProvider.new(
+          client_id: "client_id",
+          client_secret: "client_secret",
+          token_url: "http://localhost/oauth2/token"
+        )
       )
 
-      expect(client.token).to eq("cached_token")
-    end
-
-    it "caches the token" do
-      cache = ActiveSupport::Cache::MemoryStore.new
-
-      allow(cache).to receive(:fetch).and_yield
-
-      client = described_class.new(
-        base_url: "http://localhost/",
-        client_id: "client_id",
-        client_secret: "client_secret",
-        oauth_token_url: "http://localhost/oauth2/token",
-        max_token_ttl: 60,
-        cache: cache
-      )
-
-      client.token
-
-      expect(cache).to have_received(:fetch).with("oauth_api_client|http://localhost/|http://localhost/oauth2/token|client_id", expires_in: 60)
+      expect(client.token).to eq("access_token")
     end
   end
 
   [:timeout, :headers, :cookies, :via, :encoding, :accept, :auth, :basic_auth].each do |method|
     describe "##{method}" do
       it "creates a dupped instance" do
-        client = described_class.new(
-          base_url: "http://localhost/",
-          client_id: "client_id",
-          client_secret: "client_secret",
-          oauth_token_url: "http://localhost/oauth2/token",
-          base_request: HttpTestRequest.new
-        )
+        client = described_class.new(base_url: "http://localhost/", token: "token", base_request: HttpTestRequest.new)
 
         client1 = client.send(method, "key1")
         client2 = client1.send(method, "key1")
@@ -96,13 +63,7 @@ RSpec.describe Oauth2ApiClient do
       end
 
       it "extends the request" do
-        client = described_class.new(
-          base_url: "http://localhost/",
-          client_id: "client_id",
-          client_secret: "client_secret",
-          oauth_token_url: "http://localhost/oauth2/token",
-          base_request: HttpTestRequest.new
-        )
+        client = described_class.new(base_url: "http://localhost/", token: "token", base_request: HttpTestRequest.new)
 
         client1 = client.send(method, "key1")
         client2 = client1.send(method, "key2")
@@ -118,12 +79,7 @@ RSpec.describe Oauth2ApiClient do
       stub_request(:get, "http://localhost/path?key=value")
         .to_return(status: 200, body: "ok")
 
-      client = described_class.new(
-        base_url: "http://localhost/",
-        client_id: "client_id",
-        client_secret: "client_secret",
-        oauth_token_url: "http://localhost/oauth2/token"
-      )
+      client = described_class.new(base_url: "http://localhost/", token: "token")
 
       expect(client.get("/path", params: { key: "value" }).to_s).to eq("ok")
     end
@@ -133,33 +89,9 @@ RSpec.describe Oauth2ApiClient do
         .with(headers: { "Authorization" => "Bearer access_token" })
         .to_return(status: 200, body: "ok", headers: {})
 
-      client = described_class.new(
-        base_url: "http://localhost/",
-        client_id: "client_id",
-        client_secret: "client_secret",
-        oauth_token_url: "http://localhost/oauth2/token"
-      )
+      client = described_class.new(base_url: "http://localhost/", token: "access_token")
 
       expect(client.get("/path").to_s).to eq("ok")
-    end
-
-    it "invalidates the cached token when an http unauthorized status is returned" do
-      stub_request(:get, "http://localhost/path")
-        .to_return(status: 401, body: "unauthorized")
-
-      cache = ActiveSupport::Cache::MemoryStore.new
-
-      client = described_class.new(
-        base_url: "http://localhost/",
-        client_id: "client_id",
-        client_secret: "client_secret",
-        oauth_token_url: "http://localhost/oauth2/token",
-        cache: cache
-      )
-
-      expect { client.get("/path") }.to raise_error(described_class::HttpError)
-
-      expect(cache.read("oauth_api_client|http://localhost/|http://localhost/oauth2/token|client_id")).to be_nil
     end
 
     it "retries the request when an http unauthorized status is returned" do
@@ -168,9 +100,11 @@ RSpec.describe Oauth2ApiClient do
 
       client = described_class.new(
         base_url: "http://localhost/",
-        client_id: "client_id",
-        client_secret: "client_secret",
-        oauth_token_url: "http://localhost/oauth2/token"
+        token: described_class::TokenProvider.new(
+          client_id: "client_id",
+          client_secret: "client_secret",
+          token_url: "http://localhost/oauth2/token"
+        )
       )
 
       expect(client.get("/path").to_s).to eq("ok")
@@ -182,9 +116,11 @@ RSpec.describe Oauth2ApiClient do
 
       client = described_class.new(
         base_url: "http://localhost/",
-        client_id: "client_id",
-        client_secret: "client_secret",
-        oauth_token_url: "http://localhost/oauth2/token"
+        token: described_class::TokenProvider.new(
+          client_id: "client_id",
+          client_secret: "client_secret",
+          token_url: "http://localhost/oauth2/token"
+        )
       )
 
       expect { client.get("/path") }.to raise_error(described_class::HttpError)
