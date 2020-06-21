@@ -9,7 +9,7 @@ Oauth2ApiClient is small, but powerful client around
 oauth2 for authentication.
 
 ```ruby
-client = Oauth2ApiClient.new(base_url: "https://api.example.com/", token "oauth2 token")
+client = Oauth2ApiClient.new(base_url: "https://api.example.com", token "oauth2 token")
 
 client.post("/orders", json: { address: "..." }).status.success?
 client.headers("User-Agent" => "API Client").timeout(read: 5, write: 5).get("/orders").parse
@@ -22,7 +22,7 @@ renewal on expiry, including retry of the current request.
 
 ```ruby
 client = Oauth2ApiClient.new(
-  base_url: "https://api.example.com/",
+  base_url: "https://api.example.com",
   token: Oauth2ApiClient::TokenProvider.new(
     client_id: "client id",
     client_secret: "client secret",

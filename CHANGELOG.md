@@ -5,3 +5,4 @@
 
 * `TokenProvider` added
 * Added option to pass the pre-generated oauth token
+* Simple concatenation of base url and path

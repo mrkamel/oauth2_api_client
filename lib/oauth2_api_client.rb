@@ -23,7 +23,7 @@ class Oauth2ApiClient
   #
   # @example
   #   client = Oauth2ApiClient.new(
-  #     base_url: "https://api.example.com/",
+  #     base_url: "https://api.example.com",
   #     token: "the api token"
   #   )
   #
@@ -32,7 +32,7 @@ class Oauth2ApiClient
   #
   # @example
   #   client = Oauth2ApiClient.new(
-  #     base_url: "https://api.example.com/",
+  #     base_url: "https://api.example.com",
   #     token: Oauth2ApiClient::TokenProvider.new(
   #       client_id: "the client id",
   #       client_secret: "the client secret",
@@ -75,7 +75,7 @@ class Oauth2ApiClient
 
   def execute(verb, path, options = {})
     with_retry do
-      response = @request.auth("Bearer #{token}").send(verb, URI.join(@base_url, path), options)
+      response = @request.auth("Bearer #{token}").send(verb, "#{@base_url}#{path}", options)
 
       return response if response.status.success?
 

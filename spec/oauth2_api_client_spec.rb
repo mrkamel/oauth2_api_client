@@ -76,30 +76,30 @@ RSpec.describe Oauth2ApiClient do
 
   describe "request" do
     it "prepends the base url" do
-      stub_request(:get, "http://localhost/path?key=value")
+      stub_request(:get, "http://localhost/api/path?key=value")
         .to_return(status: 200, body: "ok")
 
-      client = described_class.new(base_url: "http://localhost/", token: "token")
+      client = described_class.new(base_url: "http://localhost/api", token: "token")
 
       expect(client.get("/path", params: { key: "value" }).to_s).to eq("ok")
     end
 
     it "passes the token in the authentication header" do
-      stub_request(:get, "http://localhost/path")
+      stub_request(:get, "http://localhost/api/path")
         .with(headers: { "Authorization" => "Bearer access_token" })
         .to_return(status: 200, body: "ok", headers: {})
 
-      client = described_class.new(base_url: "http://localhost/", token: "access_token")
+      client = described_class.new(base_url: "http://localhost/api", token: "access_token")
 
       expect(client.get("/path").to_s).to eq("ok")
     end
 
     it "retries the request when an http unauthorized status is returned" do
-      stub_request(:get, "http://localhost/path")
+      stub_request(:get, "http://localhost/api/path")
         .to_return({ status: 401, body: "unauthorized" }, { status: 200, body: "ok" })
 
       client = described_class.new(
-        base_url: "http://localhost/",
+        base_url: "http://localhost/api",
         token: described_class::TokenProvider.new(
           client_id: "client_id",
           client_secret: "client_secret",
@@ -111,11 +111,11 @@ RSpec.describe Oauth2ApiClient do
     end
 
     it "raises if the retried request also fails" do
-      stub_request(:get, "http://localhost/path")
+      stub_request(:get, "http://localhost/api/path")
         .to_return(status: 401, body: "unauthorized")
 
       client = described_class.new(
-        base_url: "http://localhost/",
+        base_url: "http://localhost/api",
         token: described_class::TokenProvider.new(
           client_id: "client_id",
           client_secret: "client_secret",

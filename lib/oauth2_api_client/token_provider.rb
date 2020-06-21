@@ -1,3 +1,5 @@
+require "uri"
+
 class Oauth2ApiClient
   # The TokenProvider class is responsible for obtaining and caching an oauth2
   # token, when client id, client secret and token url is given.
