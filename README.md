@@ -33,6 +33,9 @@ client = Oauth2ApiClient.new(
 )
 ```
 
+Please note, `get`, `post`, `put`, etc. will raise `Oauth2ApiClient::HttpError`
+unless the response code is 2xx.
+
 ## Install
 
 Add this line to your application's Gemfile:
