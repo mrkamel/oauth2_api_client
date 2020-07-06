@@ -3,7 +3,7 @@
 [![Build Status](https://secure.travis-ci.org/mrkamel/oauth2_api_client.svg?branch=master)](http://travis-ci.org/mrkamel/oauth2_api_client)
 [![Gem Version](https://badge.fury.io/rb/oauth2_api_client.svg)](http://badge.fury.io/rb/oauth2_api_client)
 
-Oauth2ApiClient is small, but powerful client around
+Oauth2ApiClient is a small, but powerful client around
 [oauth2](https://github.com/oauth-xx/oauth2) and
 [http-rb](https://github.com/httprb/http) to interact with APIs which use
 oauth2 for authentication.
