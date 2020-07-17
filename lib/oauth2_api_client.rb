@@ -79,7 +79,7 @@ class Oauth2ApiClient
 
       return response if response.status.success?
 
-      raise HttpError.new(response.status.to_s, response)
+      raise HttpError.new(response)
     end
   end
 

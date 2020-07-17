@@ -1,10 +1,13 @@
 class Oauth2ApiClient
   class HttpError < StandardError
-    attr_reader :message, :response
+    attr_reader :response
 
-    def initialize(message, response)
-      @message = message
+    def initialize(response)
       @response = response
+    end
+
+    def to_s
+      "#{self.class.name} (#{response.status.code}): #{response.body}"
     end
   end
 end
