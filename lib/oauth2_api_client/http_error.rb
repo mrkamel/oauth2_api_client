@@ -7,7 +7,7 @@ class Oauth2ApiClient
     end
 
     def to_s
-      "#{self.class.name} (#{response.status.code}): #{response.body}"
+      "#{self.class.name} (#{response.code}): #{response.body}"
     end
   end
 end
