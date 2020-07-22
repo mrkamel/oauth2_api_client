@@ -77,7 +77,7 @@ class Oauth2ApiClient
     # Returns the exception class for a status code of the given response.
 
     def self.for(response)
-      return const_get(const_name_for(STATUSES[response.code])).new(response) if STATUSES.key?(response.code)
+      return const_get(const_name(STATUSES[response.code])).new(response) if STATUSES.key?(response.code)
 
       new(response)
     end
@@ -87,12 +87,12 @@ class Oauth2ApiClient
     # Returns a sanitized version to be used as a constant name for a given
     # http error message.
 
-    def self.const_name_for(name)
-      name.gsub(/[^a-zA-Z]/, '')
+    def self.const_name(message)
+      message.gsub(/[^a-zA-Z0-9]/, '')
     end
 
     STATUSES.each do |code, message|
-      const_set(const_name_for(message), Class.new(HttpError))
+      const_set(const_name(message), Class.new(HttpError))
     end
   end
 end
