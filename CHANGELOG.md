@@ -1,6 +1,11 @@
 
 # CHANGELOG
 
+# v2.2.0
+
+* Added http error exception classes like e.g.
+  `Oauth2ApiClient::HttpError::NotFound`, etc.
+
 # v2.1.0
 
 * Include the response code and body in `HttpError#to_s`
