@@ -3,9 +3,9 @@ require File.expand_path("../spec_helper", __dir__)
 RSpec.describe Oauth2ApiClient::ResponseError do
   describe "#to_s" do
     it "returns the message" do
-      response = double(code: 401, body: "unauthorized")
+      response = double(code: 401, body: "unauthorized", uri: "http://example.com/")
 
-      expect(described_class.new(response).to_s).to eq("Oauth2ApiClient::ResponseError (401): unauthorized")
+      expect(described_class.new(response).to_s).to eq("Oauth2ApiClient::ResponseError (401, http://example.com/): unauthorized")
     end
   end
 
