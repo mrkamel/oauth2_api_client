@@ -33,8 +33,11 @@ client = Oauth2ApiClient.new(
 )
 ```
 
-Please note, `get`, `post`, `put`, etc. will raise `Oauth2ApiClient::HttpError`
-unless the response code is 2xx.
+Please note, `get`, `post`, `put`, etc. will raise
+`Oauth2ApiClient::ResponseError` unless the response code is 2xx. More
+specifically, it will e.g. raise `Oauth2ApiClient::ResponseError::NotFound` for
+a 404 status code, `Oauth2ApiClient::ResponseError::InternalServerError` for a
+500 status code, etc.
 
 ## Install
 

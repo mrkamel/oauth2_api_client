@@ -5,7 +5,7 @@ require "ruby2_keywords"
 require "active_support"
 
 require "oauth2_api_client/version"
-require "oauth2_api_client/http_error"
+require "oauth2_api_client/response_error"
 require "oauth2_api_client/token_provider"
 
 # The Oauth2ApiClient class is a client wrapped around the oauth2 and http-rb
@@ -79,7 +79,7 @@ class Oauth2ApiClient
 
       return response if response.status.success?
 
-      raise HttpError, response
+      raise ResponseError.for(response)
     end
   end
 
@@ -88,7 +88,7 @@ class Oauth2ApiClient
 
     begin
       yield
-    rescue HttpError => e
+    rescue ResponseError => e
       if !retried && e.response.status.unauthorized? && @token.respond_to?(:invalidate_token)
         @token.invalidate_token
 
