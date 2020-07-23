@@ -1,10 +1,12 @@
 
 # CHANGELOG
 
-# v2.2.0
+# v3.0.0
 
+* [BREAKING] Renamed `Oauth2ApiClient::HttpError` to
+  `Oauth2ApiClient::ResponseError`
 * Added http error exception classes like e.g.
-  `Oauth2ApiClient::HttpError::NotFound`, etc.
+  `Oauth2ApiClient::ResponseError::NotFound`, etc.
 
 # v2.1.0
 

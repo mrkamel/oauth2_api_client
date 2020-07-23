@@ -123,7 +123,7 @@ RSpec.describe Oauth2ApiClient do
         )
       )
 
-      expect { client.get("/path") }.to raise_error("Oauth2ApiClient::HttpError::Unauthorized (401): unauthorized")
+      expect { client.get("/path") }.to raise_error("Oauth2ApiClient::ResponseError::Unauthorized (401): unauthorized")
     end
   end
 end

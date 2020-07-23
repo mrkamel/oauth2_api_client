@@ -1,5 +1,5 @@
 class Oauth2ApiClient
-  # The HttpError class is the main exception class of Oauth2ApiClient and is
+  # The ResponseError class is the main exception class of Oauth2ApiClient and is
   # raised when a request fails with some status code other than 2xx. Using
   # the exception object, you still have access to the response. Moreover,
   # there are exception classes for all 4xx and 5xx errors.
@@ -7,15 +7,15 @@ class Oauth2ApiClient
   # @example
   #   begin
   #     client.post("/orders", json: { address: "..." })
-  #   rescue Oauth2ApiClient::HttpError::NotFound => e
+  #   rescue Oauth2ApiClient::ResponseError::NotFound => e
   #     e.response # => HTTP::Response
-  #   rescue Oauth2ApiClient::HttpError::BadRequest => e
+  #   rescue Oauth2ApiClient::ResponseError::BadRequest => e
   #     # ...
-  #   rescue Oauth2ApiClient::HttpError => e
+  #   rescue Oauth2ApiClient::ResponseError => e
   #     # ...
   #   end
 
-  class HttpError < StandardError
+  class ResponseError < StandardError
     STATUSES = {
       400 => "Bad Request",
       401 => "Unauthorized",
@@ -92,7 +92,7 @@ class Oauth2ApiClient
     end
 
     STATUSES.each do |_code, message|
-      const_set(const_name(message), Class.new(HttpError))
+      const_set(const_name(message), Class.new(self))
     end
   end
 end
