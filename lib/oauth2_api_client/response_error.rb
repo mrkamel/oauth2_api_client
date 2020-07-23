@@ -69,7 +69,7 @@ class Oauth2ApiClient
     end
 
     def to_s
-      "#{self.class.name} (#{response.code}): #{response.body}"
+      "#{self.class.name} (#{response.code}, #{response.uri}): #{response.body}"
     end
 
     # @api private

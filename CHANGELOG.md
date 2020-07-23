@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+# v3.1.0
+
+* Added uri to `Oauth2ApiClient::ReponseError` exception message
+
 # v3.0.0
 
 * [BREAKING] Renamed `Oauth2ApiClient::HttpError` to
