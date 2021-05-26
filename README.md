@@ -12,7 +12,7 @@ oauth2 for authentication.
 client = Oauth2ApiClient.new(base_url: "https://api.example.com", token "oauth2 token")
 
 client.post("/orders", json: { address: "..." }).status.success?
-client.headers("User-Agent" => "API Client").timeout(read: 5, write: 5).get("/orders").parse
+client.headers("User-Agent" => "API Client").timeout(read: 5, write: 5).get("/orders").parse(:json)
 # ...
 ```
 

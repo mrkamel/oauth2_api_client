@@ -28,7 +28,7 @@ class Oauth2ApiClient
   #   )
   #
   #   client.post("/orders", json: { address: "..." }).status.success?
-  #   client.headers("User-Agent" => "API Client").timeout(read: 5, write: 5).get("/orders").parse
+  #   client.headers("User-Agent" => "API Client").timeout(read: 5, write: 5).get("/orders").parse(:json)
   #
   # @example
   #   client = Oauth2ApiClient.new(
