@@ -1,6 +1,12 @@
 AllCops:
   NewCops: enable
 
+Gemspec/RequiredRubyVersion:
+  Enabled: false
+
+Gemspec/RequireMFA:
+  Enabled: false
+
 Metrics/ParameterLists:
   Enabled: false
 

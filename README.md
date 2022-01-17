@@ -1,6 +1,6 @@
 # oauth2_api_client
 
-[![Build Status](https://secure.travis-ci.org/mrkamel/oauth2_api_client.svg?branch=master)](http://travis-ci.org/mrkamel/oauth2_api_client)
+[![Build](https://github.com/mrkamel/oauth2_api_client/workflows/test/badge.svg)](https://github.com/mrkamel/oauth2_api_client/actions?query=workflow%3Atest+branch%3Amaster)
 [![Gem Version](https://badge.fury.io/rb/oauth2_api_client.svg)](http://badge.fury.io/rb/oauth2_api_client)
 
 Oauth2ApiClient is a small, but powerful client around

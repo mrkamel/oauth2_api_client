@@ -1,7 +1,6 @@
 require "ruby2_keywords"
 require "oauth2"
 require "http"
-require "ruby2_keywords"
 require "active_support"
 
 require "oauth2_api_client/version"
@@ -41,7 +40,7 @@ class Oauth2ApiClient
   #     )
   #   )
 
-  def initialize(base_url:, base_request: HTTP, token:)
+  def initialize(base_url:, token:, base_request: HTTP)
     @base_url = base_url
     @token = token
     @request = base_request
