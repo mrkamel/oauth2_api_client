@@ -26,6 +26,6 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency "activesupport"
   spec.add_dependency "http"
-  spec.add_dependency "oauth2"
+  spec.add_dependency "oauth2", ">= 1.4.2"
   spec.add_dependency "ruby2_keywords"
 end

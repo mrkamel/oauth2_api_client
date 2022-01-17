@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+# v3.1.1
+
+* Added oauth2 version constraint
+
 # v3.1.0
 
 * Added uri to `Oauth2ApiClient::ReponseError` exception message
