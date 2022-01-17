@@ -65,7 +65,7 @@ class Oauth2ApiClient
     attr_reader :response
 
     def initialize(response)
-      super
+      super()
 
       @response = response
     end
