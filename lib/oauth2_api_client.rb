@@ -51,6 +51,8 @@ class Oauth2ApiClient
   # @return [String] The token
 
   def token
+    return if @token.nil?
+
     @token.respond_to?(:to_str) ? @token.to_str : @token.token
   end
 
@@ -74,7 +76,10 @@ class Oauth2ApiClient
 
   def execute(verb, path, options = {})
     with_retry do
-      response = @request.auth("Bearer #{token}").send(verb, "#{@base_url}#{path}", options)
+      request = @request
+      request = request.auth("Bearer #{token}") if token
+
+      response = request.send(verb, "#{@base_url}#{path}", options)
 
       return response if response.status.success?
 
