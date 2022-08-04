@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+# v3.2.0
+
+* Allow passing `nil` as token for unprotected APIs
+
 # v3.1.1
 
 * Added oauth2 version constraint

@@ -84,12 +84,22 @@ RSpec.describe Oauth2ApiClient do
       expect(client.get("/path", params: { key: "value" }).to_s).to eq("ok")
     end
 
-    it "passes the token in the authentication header" do
+    it "passes the token in the authorization header" do
       stub_request(:get, "http://localhost/api/path")
         .with(headers: { "Authorization" => "Bearer access_token" })
         .to_return(status: 200, body: "ok", headers: {})
 
       client = described_class.new(base_url: "http://localhost/api", token: "access_token")
+
+      expect(client.get("/path").to_s).to eq("ok")
+    end
+
+    it "does not pass any authorization header when the token is nil" do
+      stub_request(:get, "http://localhost/api/path")
+        .with { |request| !request.headers.keys.map(&:to_s).map(&:downcase).include?("authorization") }
+        .to_return(status: 200, body: "ok", headers: {})
+
+      client = described_class.new(base_url: "http://localhost/api", token: nil)
 
       expect(client.get("/path").to_s).to eq("ok")
     end
