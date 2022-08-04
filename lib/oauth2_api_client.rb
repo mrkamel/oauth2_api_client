@@ -40,7 +40,7 @@ class Oauth2ApiClient
   #     )
   #   )
 
-  def initialize(base_url:, token:, base_request: HTTP)
+  def initialize(base_url:, token: nil, base_request: HTTP)
     @base_url = base_url
     @token = token
     @request = base_request

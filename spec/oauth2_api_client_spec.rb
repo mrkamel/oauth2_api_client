@@ -94,12 +94,12 @@ RSpec.describe Oauth2ApiClient do
       expect(client.get("/path").to_s).to eq("ok")
     end
 
-    it "does not pass any authorization header when the token is nil" do
+    it "does not pass any authorization header when no token is provided" do
       stub_request(:get, "http://localhost/api/path")
         .with { |request| !request.headers.keys.map(&:to_s).map(&:downcase).include?("authorization") }
         .to_return(status: 200, body: "ok", headers: {})
 
-      client = described_class.new(base_url: "http://localhost/api", token: nil)
+      client = described_class.new(base_url: "http://localhost/api")
 
       expect(client.get("/path").to_s).to eq("ok")
     end
