@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+# v3.2.1
+
+* Fix thread safety issue of http-rb
+
 # v3.2.0
 
 * Allow passing `nil` as token for unprotected APIs
