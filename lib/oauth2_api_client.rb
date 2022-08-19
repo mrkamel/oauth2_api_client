@@ -77,6 +77,7 @@ class Oauth2ApiClient
   def execute(verb, path, options = {})
     with_retry do
       request = @request
+      request = request.headers({}) # Prevent thread-safety issue of http-rb: https://github.com/httprb/http/issues/558
       request = request.auth("Bearer #{token}") if token
 
       response = request.send(verb, "#{@base_url}#{path}", options)
