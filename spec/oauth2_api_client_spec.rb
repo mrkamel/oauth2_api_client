@@ -51,6 +51,62 @@ RSpec.describe Oauth2ApiClient do
     end
   end
 
+  describe "#params" do
+    it "creates a dupped instance" do
+      client = described_class.new(base_url: "http://localhost")
+
+      client1 = client.params(key1: "value1")
+      client2 = client1.params(key2: "value2")
+
+      expect(client1.object_id).not_to eq(client2.object_id)
+    end
+
+    it "merges the params" do
+      client = described_class.new(base_url: "http://localhost")
+
+      client1 = client.params(key1: "value1")
+      client2 = client1.params(key2: "value2")
+
+      expect(client2.instance_variable_get(:@params)).to eq(key1: "value1", key2: "value2")
+    end
+
+    it "merges the params with passed params in requests" do
+      stub_request(:get, "http://localhost/api/path?key1=value1&key2=value2")
+        .to_return(status: 200, body: "ok")
+
+      client = described_class.new(base_url: "http://localhost/api", token: "token").params(key1: "value1")
+
+      expect(client.get("/path", params: { key2: "value2" }).to_s).to eq("ok")
+    end
+
+    it "overwrites the default params when neccessary" do
+      stub_request(:get, "http://localhost/api/path?key=value2")
+        .to_return(status: 200, body: "ok")
+
+      client = described_class.new(base_url: "http://localhost/api", token: "token").params(key: "value1")
+
+      expect(client.get("/path", params: { key: "value2" }).to_s).to eq("ok")
+    end
+
+    it "passes the default params only when no params are given" do
+      stub_request(:get, "http://localhost/api/path?key=value")
+        .to_return(status: 200, body: "ok")
+
+      client = described_class.new(base_url: "http://localhost/api", token: "token").params(key: "value")
+
+      expect(client.get("/path").to_s).to eq("ok")
+    end
+
+    it "passes the params only when no default params are given" do
+      stub_request(:get, "http://localhost/api/path?key=value")
+        .to_return(status: 200, body: "ok")
+
+      client = described_class.new(base_url: "http://localhost/api", token: "token")
+
+      expect(client.get("/path", params: { key: "value" }).to_s).to eq("ok")
+    end
+  end
+
   [:timeout, :headers, :cookies, :via, :encoding, :accept, :auth, :basic_auth].each do |method|
     describe "##{method}" do
       it "creates a dupped instance" do

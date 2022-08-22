@@ -56,6 +56,12 @@ class Oauth2ApiClient
     @token.respond_to?(:to_str) ? @token.to_str : @token.token
   end
 
+  def params(parms = {})
+    dup.tap do |client|
+      client.instance_variable_set(:@params, (@params || {}).merge(parms))
+    end
+  end
+
   [:timeout, :headers, :cookies, :via, :encoding, :accept, :auth, :basic_auth].each do |method|
     define_method method do |*args|
       dup.tap do |client|
@@ -80,7 +86,10 @@ class Oauth2ApiClient
       request = request.headers({}) # Prevent thread-safety issue of http-rb: https://github.com/httprb/http/issues/558
       request = request.auth("Bearer #{token}") if token
 
-      response = request.send(verb, "#{@base_url}#{path}", options)
+      opts = options.dup
+      opts[:params] = @params.merge(opts.fetch(:params, {})) if @params
+
+      response = request.send(verb, "#{@base_url}#{path}", opts)
 
       return response if response.status.success?
 

@@ -46,6 +46,17 @@ specifically, it will e.g. raise `Oauth2ApiClient::ResponseError::NotFound` for
 a 404 status code, `Oauth2ApiClient::ResponseError::InternalServerError` for a
 500 status code, etc.
 
+## Default query params
+
+In addition to the DSL of http-rb Oauth2ApiClient allows to set default query
+params, which can be useful for some APIs:
+
+```ruby
+client = Oauth2ApiClient.new(base_url: "https://api.example.com").params(key1: "value1")
+client.get("/path", params: { key2: "value" })
+#=> GET https://api.example.com/path?key1=value1&key2=value2
+```
+
 ## Install
 
 Add this line to your application's Gemfile:
