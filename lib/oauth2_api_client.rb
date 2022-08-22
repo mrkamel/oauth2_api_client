@@ -87,7 +87,7 @@ class Oauth2ApiClient
       request = request.auth("Bearer #{token}") if token
 
       opts = options.dup
-      opts[:params] = @params.merge(opts[:params]) if @params
+      opts[:params] = @params.merge(opts.fetch(:params, {})) if @params
 
       response = request.send(verb, "#{@base_url}#{path}", opts)
 

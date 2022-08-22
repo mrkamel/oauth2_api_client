@@ -87,6 +87,24 @@ RSpec.describe Oauth2ApiClient do
 
       expect(client.get("/path", params: { key: "value2" }).to_s).to eq("ok")
     end
+
+    it "passes the default params only when no params are given" do
+      stub_request(:get, "http://localhost/api/path?key=value")
+        .to_return(status: 200, body: "ok")
+
+      client = described_class.new(base_url: "http://localhost/api", token: "token").params(key: "value")
+
+      expect(client.get("/path").to_s).to eq("ok")
+    end
+
+    it "passes the params only when no default params are given" do
+      stub_request(:get, "http://localhost/api/path?key=value")
+        .to_return(status: 200, body: "ok")
+
+      client = described_class.new(base_url: "http://localhost/api", token: "token")
+
+      expect(client.get("/path", params: { key: "value" }).to_s).to eq("ok")
+    end
   end
 
   [:timeout, :headers, :cookies, :via, :encoding, :accept, :auth, :basic_auth].each do |method|
