@@ -55,8 +55,8 @@ RSpec.describe Oauth2ApiClient do
     it "creates a dupped instance" do
       client = described_class.new(base_url: "http://localhost")
 
-      client1 = client.params(key1: 'value1')
-      client2 = client1.params(key2: 'value2')
+      client1 = client.params(key1: "value1")
+      client2 = client1.params(key2: "value2")
 
       expect(client1.object_id).not_to eq(client2.object_id)
     end
