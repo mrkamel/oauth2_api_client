@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+# v3.3.0
+
+* Add Oauth2ApiClient#params to set default query params
+
 # v3.2.1
 
 * Fix thread safety issue of http-rb
