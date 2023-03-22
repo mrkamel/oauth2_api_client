@@ -140,6 +140,19 @@ RSpec.describe Oauth2ApiClient do
       expect(client.get("/path", params: { key: "value" }).to_s).to eq("ok")
     end
 
+    [:get, :post, :put, :patch, :delete, :head, :options].each do |method|
+      describe "##{method}" do
+        it "calls with body" do
+          stub_request(method, "http://localhost/api/path").with(body: { key: "value" }.to_json)
+            .to_return(status: 200, body: "ok")
+
+          client = described_class.new(base_url: "http://localhost/api", token: "token")
+
+          expect(client.send(method, "/path", headers: { "Content-Type" => "application/json" }, body: { key: "value" }.to_json).to_s).to eq("ok")
+        end
+      end
+    end
+
     it "passes the token in the authorization header" do
       stub_request(:get, "http://localhost/api/path")
         .with(headers: { "Authorization" => "Bearer access_token" })

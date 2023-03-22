@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+# v3.4.0
+
+* Add PATCH method
+
 # v3.3.0
 
 * Add Oauth2ApiClient#params to set default query params

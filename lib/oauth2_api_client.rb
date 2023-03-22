@@ -72,7 +72,7 @@ class Oauth2ApiClient
     ruby2_keywords method
   end
 
-  [:get, :post, :put, :delete, :head, :options].each do |method|
+  [:get, :post, :put, :patch, :delete, :head, :options].each do |method|
     define_method method do |path, options = {}|
       execute(method, path, options)
     end
