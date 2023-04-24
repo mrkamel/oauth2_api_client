@@ -17,7 +17,7 @@ class HttpTestRequest
 end
 
 RSpec.describe Oauth2ApiClient do
-  before do
+  let(:auth_request_stub) do
     token_response = {
       access_token: "access_token",
       token_type: "bearer",
@@ -28,6 +28,10 @@ RSpec.describe Oauth2ApiClient do
 
     stub_request(:post, "http://localhost/oauth2/token")
       .to_return(status: 200, body: JSON.generate(token_response), headers: { "Content-Type" => "application/json" })
+  end
+
+  before do
+    auth_request_stub
   end
 
   describe "#token" do
@@ -171,6 +175,24 @@ RSpec.describe Oauth2ApiClient do
       client = described_class.new(base_url: "http://localhost/api")
 
       expect(client.get("/path").to_s).to eq("ok")
+    end
+
+    it "calls token provider once if NullStore is set as cache" do
+      stub_request(:get, "http://localhost/api/path")
+        .to_return({ status: 200, body: "ok" })
+
+      client = described_class.new(
+        base_url: "http://localhost/api",
+        token: described_class::TokenProvider.new(
+          client_id: "client_id",
+          client_secret: "client_secret",
+          token_url: "http://localhost/oauth2/token",
+          cache: ActiveSupport::Cache::NullStore.new
+        )
+      )
+
+      expect(client.get("/path").to_s).to eq("ok")
+      expect(auth_request_stub).to have_been_requested.once
     end
 
     it "retries the request when an http unauthorized status is returned" do
