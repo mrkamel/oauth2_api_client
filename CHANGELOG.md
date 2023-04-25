@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+# v3.4.1
+
+* fix duplicate auth calls if NullStore is used
+
 # v3.4.0
 
 * Add PATCH method
