@@ -30,10 +30,6 @@ RSpec.describe Oauth2ApiClient do
       .to_return(status: 200, body: JSON.generate(token_response), headers: { "Content-Type" => "application/json" })
   end
 
-  before do
-    auth_request_stub
-  end
-
   describe "#token" do
     it "returns the supplier token" do
       client = described_class.new(base_url: "http://localhost/", token: "access_token")
