@@ -17,7 +17,7 @@ class HttpTestRequest
 end
 
 RSpec.describe Oauth2ApiClient do
-  let(:auth_request_stub) do
+  let!(:auth_request_stub) do
     token_response = {
       access_token: "access_token",
       token_type: "bearer",
