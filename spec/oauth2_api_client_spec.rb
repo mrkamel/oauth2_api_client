@@ -175,7 +175,7 @@ RSpec.describe Oauth2ApiClient do
 
     it "calls token provider once if NullStore is set as cache" do
       stub_request(:get, "http://localhost/api/path")
-        .to_return({ status: 200, body: "ok" })
+        .to_return(status: 200, body: "ok")
 
       client = described_class.new(
         base_url: "http://localhost/api",
