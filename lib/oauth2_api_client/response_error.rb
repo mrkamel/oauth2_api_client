@@ -93,7 +93,7 @@ class Oauth2ApiClient
       message.gsub(/[^a-zA-Z0-9]/, "")
     end
 
-    STATUSES.each do |_code, message|
+    STATUSES.each_value do |message|
       const_set(const_name(message), Class.new(self))
     end
   end
