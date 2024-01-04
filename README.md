@@ -57,6 +57,21 @@ client.get("/path", params: { key2: "value" })
 #=> GET https://api.example.com/path?key1=value1&key2=value2
 ```
 
+## Persistent connections (keep-alive)
+
+You can use keep-alive on the base url via:
+
+```ruby
+client = Oauth2ApiClient.new(base_url: "https://api.example.com/v1").persistent(timeout: 5)
+client.get("/path")
+```
+
+where the `timeout` is optional. Please note that you must consume the response
+via `#to_s`, `#parse` or `#flush` before sending next request via persistent
+connection. Check out the
+[http-rb docs](https://github.com/httprb/http/wiki/Persistent-Connections-%28keep-alive%29)
+for more info.
+
 ## Install
 
 Add this line to your application's Gemfile:

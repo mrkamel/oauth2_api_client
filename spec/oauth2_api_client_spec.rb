@@ -7,7 +7,7 @@ class HttpTestRequest
     self.calls = []
   end
 
-  [:timeout, :headers, :cookies, :via, :encoding, :accept, :auth, :basic_auth].each do |method|
+  [:persistent, :timeout, :headers, :cookies, :via, :encoding, :accept, :auth, :basic_auth].each do |method|
     define_method method do |*args|
       dup.tap do |request|
         request.calls = calls + [[method, args]]
@@ -130,12 +130,33 @@ RSpec.describe Oauth2ApiClient do
     end
   end
 
+  describe "#persistent" do
+    it "delegates to the request and passes the correct base url without path" do
+      client = described_class.new(base_url: "http://localhost/api", token: "token", base_request: HttpTestRequest.new)
+
+      client1 = client.persistent("key1")
+      client2 = client1.persistent("key2")
+
+      expect(client1.instance_variable_get(:@request).calls).to eq([[:persistent, ["http://localhost", "key1"]]])
+      expect(client2.instance_variable_get(:@request).calls).to eq([[:persistent, ["http://localhost", "key1"]], [:persistent, ["http://localhost", "key2"]]])
+    end
+  end
+
   describe "request" do
     it "prepends the base url" do
       stub_request(:get, "http://localhost/api/path?key=value")
         .to_return(status: 200, body: "ok")
 
       client = described_class.new(base_url: "http://localhost/api", token: "token")
+
+      expect(client.get("/path", params: { key: "value" }).to_s).to eq("ok")
+    end
+
+    it "constructs the correct url for persistent connections" do
+      stub_request(:get, "http://localhost/api/path?key=value")
+        .to_return(status: 200, body: "ok")
+
+      client = described_class.new(base_url: "http://localhost/api", token: "token").persistent
 
       expect(client.get("/path", params: { key: "value" }).to_s).to eq("ok")
     end
@@ -150,6 +171,18 @@ RSpec.describe Oauth2ApiClient do
 
           expect(client.send(method, "/path", headers: { "Content-Type" => "application/json" }, body: { key: "value" }.to_json).to_s).to eq("ok")
         end
+      end
+    end
+
+    describe "#close" do
+      it "delegates to the request" do
+        client = described_class.new(base_url: "http://localhost/", token: "token", base_request: HttpTestRequest.new)
+
+        allow(client.instance_variable_get(:@request)).to receive(:close)
+
+        client.close
+
+        expect(client.instance_variable_get(:@request)).to have_received(:close)
       end
     end
 
