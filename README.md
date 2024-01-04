@@ -67,8 +67,8 @@ client.get("/path")
 ```
 
 where the `timeout` is optional. Please note that you must consume the response
-via `#to_s`, `#parse` or `#flush` before sending next request via persistent
-connection. Check out the
+via `#to_s`, `#parse` or `#flush` before sending the next request for persistent
+connections. Check out the
 [http-rb docs](https://github.com/httprb/http/wiki/Persistent-Connections-%28keep-alive%29)
 for more info.
 
