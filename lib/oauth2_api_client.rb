@@ -62,7 +62,7 @@ class Oauth2ApiClient
     end
   end
 
-  [:timeout, :headers, :cookies, :via, :encoding, :accept, :auth, :basic_auth].each do |method|
+  [:persistent, :timeout, :headers, :cookies, :via, :encoding, :accept, :auth, :basic_auth].each do |method|
     define_method method do |*args|
       dup.tap do |client|
         client.instance_variable_set(:@request, @request.send(method, *args))
@@ -72,13 +72,27 @@ class Oauth2ApiClient
     ruby2_keywords method
   end
 
+  ruby2_keywords def persistent(*args)
+    dup.tap do |client|
+      client.instance_variable_set(:@request, @request.send(:persistent, base_uri.dup.tap { |uri| uri.path = "" }.to_s, *args))
+    end
+  end
+
   [:get, :post, :put, :patch, :delete, :head, :options].each do |method|
     define_method method do |path, options = {}|
       execute(method, path, options)
     end
   end
 
+  def close
+    @request.close
+  end
+
   private
+
+  def base_uri
+    @base_uri ||= URI.parse(@base_url)
+  end
 
   def execute(verb, path, options = {})
     with_retry do
@@ -91,12 +105,18 @@ class Oauth2ApiClient
       opts = options.dup
       opts[:params] = @params.merge(opts.fetch(:params, {})) if @params
 
-      response = request.send(verb, "#{@base_url}#{path}", opts)
+      response = request.send(verb, url_for(path), opts)
 
       return response if response.status.success?
 
       raise ResponseError.for(response)
     end
+  end
+
+  def url_for(path)
+    return "#{base_uri.path}#{path}" if @request.respond_to?(:persistent?) && @request.persistent?
+
+    "#{@base_url}#{path}"
   end
 
   def with_retry
