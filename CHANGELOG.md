@@ -1,6 +1,10 @@
 
 # CHANGELOG
 
+# v3.5.0
+
+* Rescue `HTTP::Error` and raise `Oauth2ApiClient::Error` instead
+
 # v3.4.1
 
 * fix duplicate auth calls if NullStore is used

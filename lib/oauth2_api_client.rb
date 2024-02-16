@@ -4,7 +4,7 @@ require "http"
 require "active_support"
 
 require "oauth2_api_client/version"
-require "oauth2_api_client/response_error"
+require "oauth2_api_client/errors"
 require "oauth2_api_client/token_provider"
 
 # The Oauth2ApiClient class is a client wrapped around the oauth2 and http-rb
@@ -91,7 +91,12 @@ class Oauth2ApiClient
       opts = options.dup
       opts[:params] = @params.merge(opts.fetch(:params, {})) if @params
 
-      response = request.send(verb, "#{@base_url}#{path}", opts)
+      response =
+        begin
+          request.send(verb, "#{@base_url}#{path}", opts)
+        rescue HTTP::Error => e
+          raise Error, e.message
+        end
 
       return response if response.status.success?
 
