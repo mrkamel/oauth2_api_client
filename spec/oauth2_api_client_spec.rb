@@ -222,5 +222,13 @@ RSpec.describe Oauth2ApiClient do
 
       expect { client.get("/path") }.to raise_error("Oauth2ApiClient::ResponseError::Unauthorized (401, http://localhost/api/path): unauthorized")
     end
+
+    it "rescues HTTP::Error and raises a Oauth2ApiClient::Error instead" do
+      stub_request(:get, "http://localhost/api/path").to_raise(HTTP::Error.new("error"))
+
+      client = described_class.new(base_url: "http://localhost/api", token: "token")
+
+      expect { client.get("/path") }.to raise_error(Oauth2ApiClient::Error, "error")
+    end
   end
 end

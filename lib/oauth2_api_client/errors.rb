@@ -15,7 +15,9 @@ class Oauth2ApiClient
   #     # ...
   #   end
 
-  class ResponseError < StandardError
+  class Error < StandardError; end
+
+  class ResponseError < Error
     STATUSES = {
       400 => "Bad Request",
       401 => "Unauthorized",
@@ -93,7 +95,7 @@ class Oauth2ApiClient
       message.gsub(/[^a-zA-Z0-9]/, "")
     end
 
-    STATUSES.each do |_code, message|
+    STATUSES.each_value do |message|
       const_set(const_name(message), Class.new(self))
     end
   end
