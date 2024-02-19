@@ -1,9 +1,9 @@
 
 # CHANGELOG
 
-# v3.5.0
+# v4.0.0
 
-* Rescue `HTTP::Error` and raise `Oauth2ApiClient::Error` instead
+* [BREAKING] Rescue `HTTP::Error` and raise `Oauth2ApiClient::Error` instead
 
 # v3.4.1
 
