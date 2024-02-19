@@ -5,6 +5,28 @@
 
 * [BREAKING] Rescue `HTTP::Error` and raise `Oauth2ApiClient::Error` instead
 
+In case you currently use:
+
+```ruby
+begin
+  client = Oauth2ApiClient.new(base_url: "...")
+  client.get("...")
+rescue HTTP::Error # or HTTP::ConnectionError, etc.
+  # ...
+end
+```
+
+please change it to:
+
+```ruby
+begin
+  client = Oauth2ApiClient.new(base_url: "...")
+  client.get("...")
+rescue Oauth2ApiClient::Error
+  # ...
+end
+```
+
 # v3.4.1
 
 * fix duplicate auth calls if NullStore is used
